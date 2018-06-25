@@ -25,8 +25,8 @@ class $MODEL_NAME$APIController extends AppBaseController
 
     $DOC_INDEX$
     public function index(Request $request)
-    {
-        $this->$MODEL_NAME_CAMEL$Repository->pushCriteria(new RequestCriteria($request));
+{
+    $this->$MODEL_NAME_CAMEL$Repository->pushCriteria(new RequestCriteria($request));
         $this->$MODEL_NAME_CAMEL$Repository->pushCriteria(new LimitOffsetCriteria($request));
         $$MODEL_NAME_PLURAL_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->all();
 
@@ -45,13 +45,13 @@ class $MODEL_NAME$APIController extends AppBaseController
 
     $DOC_SHOW$
     public function show($id)
-    {
-        /** @var $MODEL_NAME$ $$MODEL_NAME_CAMEL$ */
-        $$MODEL_NAME_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->findWithoutFail($id);
+{
+    /** @var $MODEL_NAME$ $$MODEL_NAME_CAMEL$ */
+    $$MODEL_NAME_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->findWithoutFail($id);
 
         if (empty($$MODEL_NAME_CAMEL$)) {
-            return $this->sendError('$MODEL_NAME_HUMAN$ not found');
-        }
+    return $this->sendError('$MODEL_NAME_HUMAN$ not found');
+}
 
         return $this->sendResponse($$MODEL_NAME_CAMEL$->toArray(), '$MODEL_NAME_HUMAN$ retrieved successfully');
     }
@@ -65,8 +65,8 @@ class $MODEL_NAME$APIController extends AppBaseController
         $$MODEL_NAME_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->findWithoutFail($id);
 
         if (empty($$MODEL_NAME_CAMEL$)) {
-            return $this->sendError('$MODEL_NAME_HUMAN$ not found');
-        }
+        return $this->sendError('$MODEL_NAME_HUMAN$ not found');
+    }
 
         $$MODEL_NAME_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->update($input, $id);
 
@@ -75,13 +75,13 @@ class $MODEL_NAME$APIController extends AppBaseController
 
     $DOC_DESTROY$
     public function destroy($id)
-    {
-        /** @var $MODEL_NAME$ $$MODEL_NAME_CAMEL$ */
-        $$MODEL_NAME_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->findWithoutFail($id);
+{
+    /** @var $MODEL_NAME$ $$MODEL_NAME_CAMEL$ */
+    $$MODEL_NAME_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->findWithoutFail($id);
 
         if (empty($$MODEL_NAME_CAMEL$)) {
-            return $this->sendError('$MODEL_NAME_HUMAN$ not found');
-        }
+    return $this->sendError('$MODEL_NAME_HUMAN$ not found');
+}
 
         $$MODEL_NAME_CAMEL$->delete();
 

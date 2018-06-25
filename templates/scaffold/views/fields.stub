@@ -1,0 +1,6 @@
+$FIELDS$
+<!-- Submit Field -->
+<div class="form-group col-12 text-right">
+  <button type="submit" class="btn btn-primary" ><i class="fa fa-save"></i> {{trans('lang.save')}} {{trans('lang.$MODEL_NAME_SNAKE$')}}</button>
+  <a href="{!! route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_CAMEL$.index') !!}" class="btn btn-default"><i class="fa fa-undo"></i> {{trans('lang.cancel')}}</a>
+</div>

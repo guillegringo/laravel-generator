@@ -21,6 +21,8 @@ return [
 
         'routes'            => base_path('routes/web.php'),
 
+        'lang'              => base_path('resources/lang/en/lang.php'),
+
         'api_routes'        => base_path('routes/api.php'),
 
         'request'           => app_path('Http/Requests/'),
@@ -108,7 +110,7 @@ return [
 
     'options' => [
 
-        'softDelete' => true,
+        'softDelete' => false,
 
         'tables_searchable_default' => false,
     ],
@@ -144,7 +146,7 @@ return [
 
         'tests'         => true,
 
-        'datatables'    => false,
+        'datatables'    => true,
 
         'menu'          => [
 

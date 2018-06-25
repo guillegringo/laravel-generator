@@ -7,18 +7,25 @@ use $NAMESPACE_REQUEST$;
 use $NAMESPACE_REQUEST$\Create$MODEL_NAME$Request;
 use $NAMESPACE_REQUEST$\Update$MODEL_NAME$Request;
 use $NAMESPACE_REPOSITORY$\$MODEL_NAME$Repository;
+$ADD_USED$
 use Flash;
-use $NAMESPACE_APP$\Http\Controllers\AppBaseController;
-use Response;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Response;
+use Prettus\Validator\Exceptions\ValidatorException;
 
-class $MODEL_NAME$Controller extends AppBaseController
+class $MODEL_NAME$Controller extends Controller
 {
     /** @var  $MODEL_NAME$Repository */
     private $$MODEL_NAME_CAMEL$Repository;
 
-    public function __construct($MODEL_NAME$Repository $$MODEL_NAME_CAMEL$Repo)
+    $ADD_ATTR$
+
+    public function __construct($MODEL_NAME$Repository $$MODEL_NAME_CAMEL$Repo $ADD_ATTR_PARAM$)
     {
+        parent::__construct();
         $this->$MODEL_NAME_CAMEL$Repository = $$MODEL_NAME_CAMEL$Repo;
+        $ADD_ATTR_INIT$
     }
 
     /**
@@ -39,7 +46,9 @@ class $MODEL_NAME$Controller extends AppBaseController
      */
     public function create()
     {
-        return view('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.create');
+        $SELECT_RELATIONS$
+        $SELECTED_RELATIONS_ADD$
+        return view('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.create')$SELECT_RELATIONS_PARAM$;
     }
 
     /**
@@ -52,10 +61,15 @@ class $MODEL_NAME$Controller extends AppBaseController
     public function store(Create$MODEL_NAME$Request $request)
     {
         $input = $request->all();
+        try {
+            $$MODEL_NAME_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->create($input);
+        } catch (ValidatorException $e) {
+            Flash::error($e->getMessage());
+        }
 
-        $$MODEL_NAME_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->create($input);
+        $MEDIA_COLUMNS$
 
-        Flash::success('$MODEL_NAME_HUMAN$ saved successfully.');
+        Flash::success('saved successfully.');
 
         return redirect(route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_CAMEL$.index'));
     }
@@ -90,6 +104,8 @@ class $MODEL_NAME$Controller extends AppBaseController
     public function edit($id)
     {
         $$MODEL_NAME_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->findWithoutFail($id);
+        $SELECT_RELATIONS$
+        $SELECTED_RELATIONS_EDIT$
 
         if (empty($$MODEL_NAME_CAMEL$)) {
             Flash::error('$MODEL_NAME_HUMAN$ not found');
@@ -97,7 +113,7 @@ class $MODEL_NAME$Controller extends AppBaseController
             return redirect(route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_CAMEL$.index'));
         }
 
-        return view('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.edit')->with('$MODEL_NAME_CAMEL$', $$MODEL_NAME_CAMEL$);
+        return view('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.edit')->with('$MODEL_NAME_CAMEL$', $$MODEL_NAME_CAMEL$)$SELECT_RELATIONS_PARAM$;
     }
 
     /**
@@ -118,7 +134,15 @@ class $MODEL_NAME$Controller extends AppBaseController
             return redirect(route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_CAMEL$.index'));
         }
 
-        $$MODEL_NAME_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->update($request->all(), $id);
+        $input = $request->all();
+        try {
+            $SELECTS_RELATIONS_UPDATE$
+            $$MODEL_NAME_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->update($input, $id);
+        } catch (ValidatorException $e) {
+            Flash::error($e->getMessage());
+        }
+
+        $MEDIA_COLUMNS$
 
         Flash::success('$MODEL_NAME_HUMAN$ updated successfully.');
 
@@ -148,4 +172,6 @@ class $MODEL_NAME$Controller extends AppBaseController
 
         return redirect(route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_CAMEL$.index'));
     }
+
+    $REMOVE_MEDIA_FUNCTION$
 }

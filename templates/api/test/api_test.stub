@@ -1,58 +1,59 @@
 <?php
 
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+/*
+ * This file is part of Psy Shell.
+ *
+ * (c) 2012-2018 Justin Hileman
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-class $MODEL_NAME$ApiTest extends TestCase
+namespace Psy\Test\CodeCleaner;
+
+use Psy\CodeCleaner\UseStatementPass;
+
+class UseStatementPassTest extends CodeCleanerTestCase
 {
-    use Make$MODEL_NAME$Trait, ApiTestTrait, WithoutMiddleware, DatabaseTransactions;
-
-    /**
-     * @test
-     */
-    public function testCreate$MODEL_NAME$()
+    public function setUp()
     {
-        $$MODEL_NAME_CAMEL$ = $this->fake$MODEL_NAME$Data();
-        $this->json('POST', '/api/v1/$MODEL_NAME_PLURAL_CAMEL$', $$MODEL_NAME_CAMEL$);
-
-        $this->assertApiResponse($$MODEL_NAME_CAMEL$);
+        $this->setPass(new UseStatementPass());
     }
 
     /**
-     * @test
+     * @dataProvider useStatements
      */
-    public function testRead$MODEL_NAME$()
+    public function testProcess($from, $to)
     {
-        $$MODEL_NAME_CAMEL$ = $this->make$MODEL_NAME$();
-        $this->json('GET', '/api/v1/$MODEL_NAME_PLURAL_CAMEL$/'.$$MODEL_NAME_CAMEL$->$PRIMARY_KEY_NAME$);
-
-        $this->assertApiResponse($$MODEL_NAME_CAMEL$->toArray());
+        $this->assertProcessesAs($from, $to);
     }
 
-    /**
-     * @test
-     */
-    public function testUpdate$MODEL_NAME$()
+    public function useStatements()
     {
-        $$MODEL_NAME_CAMEL$ = $this->make$MODEL_NAME$();
-        $edited$MODEL_NAME$ = $this->fake$MODEL_NAME$Data();
-
-        $this->json('PUT', '/api/v1/$MODEL_NAME_PLURAL_CAMEL$/'.$$MODEL_NAME_CAMEL$->$PRIMARY_KEY_NAME$, $edited$MODEL_NAME$);
-
-        $this->assertApiResponse($edited$MODEL_NAME$);
-    }
-
-    /**
-     * @test
-     */
-    public function testDelete$MODEL_NAME$()
-    {
-        $$MODEL_NAME_CAMEL$ = $this->make$MODEL_NAME$();
-        $this->json('DELETE', '/api/v1/$MODEL_NAME_PLURAL_CAMEL$/'.$$MODEL_NAME_CAMEL$->$PRIMARY_KEY_NAME$);
-
-        $this->assertApiSuccess();
-        $this->json('GET', '/api/v1/$MODEL_NAME_PLURAL_CAMEL$/'.$$MODEL_NAME_CAMEL$->$PRIMARY_KEY_NAME$);
-
-        $this->assertResponseStatus(404);
-    }
-}
+        return [
+            [
+                "use StdClass as NotSoStd;\n\$std = new NotSoStd();",
+                '$std = new \\StdClass();',
+            ],
+            [
+                "namespace Foo;\n\nuse StdClass as S;\n\$std = new S();",
+                "namespace Foo;\n\n\$std = new \\StdClass();",
+            ],
+            [
+                "namespace Foo;\n\nuse \\StdClass as S;\n\$std = new S();",
+                "namespace Foo;\n\n\$std = new \\StdClass();",
+            ],
+            [
+                "use Foo\\Bar as fb;\n\$baz = new fb\\Baz();",
+                '$baz = new \\Foo\\Bar\\Baz();',
+            ],
+            [
+                "use Foo\\Bar;\n\$baz = new Bar\\Baz();",
+                '$baz = new \\Foo\\Bar\\Baz();',
+            ],
+            [
+                "namespace Foo;\nuse Bar;\n\$baz = new Bar\\Baz();",
+                "namespace Foo;\n\n\$baz = new \\Bar\\Baz();",
+            ],
+            [
+                "namespace Foo;\n\nuse \\StdClass as S;\n\$std = new S();\nnamespace Foo;\n\n\$std = new S()

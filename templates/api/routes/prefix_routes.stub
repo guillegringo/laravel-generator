@@ -1,6 +1,42 @@
-Route::get('$ROUTE_PREFIX$$MODEL_NAME_PLURAL_SNAKE$', '$PATH_PREFIX$$MODEL_NAME$APIController@index');
-Route::post('$ROUTE_PREFIX$$MODEL_NAME_PLURAL_SNAKE$', '$PATH_PREFIX$$MODEL_NAME$APIController@store');
-Route::get('$ROUTE_PREFIX$$MODEL_NAME_PLURAL_SNAKE$/{$MODEL_NAME_PLURAL_SNAKE$}', '$PATH_PREFIX$$MODEL_NAME$APIController@show');
-Route::put('$ROUTE_PREFIX$$MODEL_NAME_PLURAL_SNAKE$/{$MODEL_NAME_PLURAL_SNAKE$}', '$PATH_PREFIX$$MODEL_NAME$APIController@update');
-Route::patch('$ROUTE_PREFIX$$MODEL_NAME_PLURAL_SNAKE$/{$MODEL_NAME_PLURAL_SNAKE$}', '$PATH_PREFIX$$MODEL_NAME$APIController@update');
-Route::delete('$ROUTE_PREFIX$$MODEL_NAME_PLURAL_SNAKE${$MODEL_NAME_PLURAL_SNAKE$}', '$PATH_PREFIX$$MODEL_NAME$APIController@destroy');
+<?php
+
+namespace Faker\ORM\Mandango;
+
+use Mandango\Mandango;
+use Faker\Provider\Base;
+
+/**
+ * Service class for populating a table through a Mandango ActiveRecord class.
+ */
+class EntityPopulator
+{
+    protected $class;
+    protected $columnFormatters = array();
+
+    /**
+     * Class constructor.
+     *
+     * @param string $class A Mandango ActiveRecord classname
+     */
+    public function __construct($class)
+    {
+        $this->class = $class;
+    }
+
+    /**
+     * @return string
+     */
+    public function getClass()
+    {
+        return $this->class;
+    }
+
+    public function setColumnFormatters($columnFormatters)
+    {
+        $this->columnFormatters = $columnFormatters;
+    }
+
+    /**
+     * @return array
+     */
+    p
