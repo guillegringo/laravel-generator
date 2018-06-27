@@ -95,4 +95,5 @@ class $MODEL_NAME$DataTable extends DataTable
         $pdf = PDF::loadView($this->printPreview, compact('data'));
         return $pdf->download($this->filename().'.pdf');
     }
+    
 }
