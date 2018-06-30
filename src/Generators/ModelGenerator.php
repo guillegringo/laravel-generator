@@ -2,6 +2,7 @@
 
 namespace InfyOm\Generator\Generators;
 
+use Illuminate\Support\Facades\Log;
 use InfyOm\Generator\Common\CommandData;
 use InfyOm\Generator\Common\GeneratorFieldRelation;
 use InfyOm\Generator\Utils\FileUtil;
@@ -52,7 +53,6 @@ class ModelGenerator extends BaseGenerator
             }
             if ($field->htmlType === 'file') {
                 $hasMedia = true;
-                break;
             }
             /*Multiple select generation*/
             if($field->dbInput === 'hidden,mtm'){
@@ -331,7 +331,7 @@ class ModelGenerator extends BaseGenerator
     private function generateRelations()
     {
         $relations = [];
-
+Log::alert($this->commandData->relations);
         foreach ($this->commandData->relations as $relation) {
             $relationText = $relation->getRelationFunctionText();
 

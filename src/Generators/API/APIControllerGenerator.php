@@ -35,6 +35,9 @@ class APIControllerGenerator extends BaseGenerator
 
         $this->commandData->commandComment("\nAPI Controller created: ");
         $this->commandData->commandInfo($this->fileName);
+
+        $routesGenerator = new APIRoutesGenerator($this->commandData);
+        $routesGenerator->generate();
     }
 
     private function fillDocs($templateData)

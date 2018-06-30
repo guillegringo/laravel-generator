@@ -76,6 +76,7 @@ class GeneratorConfig
         'views',
         'relations',
         'media',
+        'migrate',
     ];
 
     public $tableName;

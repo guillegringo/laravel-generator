@@ -52,7 +52,6 @@ class ControllerGenerator extends BaseGenerator
             $selectedEditFieldTemplate = get_template('scaffold.controller.selected_relations_edit', $this->templateType);
             $selectsUpdateFieldTemplate = get_template('scaffold.controller.selects_relations_update', $this->templateType);
 
-            Log::info($this->commandData->fields);
             foreach ($this->commandData->fields as $field) {
                 if (!$field->inIndex) {
                     continue;
@@ -154,8 +153,7 @@ class ControllerGenerator extends BaseGenerator
         $selectsFieldsStr = '';
         $rawColumn = '';
         $relations = '';
-        
-        Log::warning($this->commandData->fields);
+
         foreach ($this->commandData->fields as $field) {
 
             $langContents = file_get_contents($this->commandData->config->pathLang);

@@ -141,12 +141,16 @@ class BaseCommand extends Command
             } elseif (!$this->commandData->getOption('fromTable') and !$this->isSkip('migration')) {
                 if ($this->commandData->getOption('jsonFromGUI')) {
                     $this->call('migrate');
-                } elseif ($this->confirm("\nDo you want to migrate database? [y|N]", false)) {
-                    $this->call('migrate');
+                } elseif ($this->commandData->getOption('migrate')) {
+                        $this->call('migrate');
+                }else{
+                    if ($this->confirm("\nDo you want to migrate database? [y|N]", false)) {
+                        $this->call('migrate');
+                    }
                 }
             }
         }
-        if (!$this->isSkip('dump-autoload')) {
+        if (!$this->isSkip('dump-autoload') && !$this->commandData->getOption('migrate')) {
             $this->info('Generating autoload files');
             $this->composer->dumpOptimized();
         }
@@ -239,6 +243,8 @@ class BaseCommand extends Command
             ['views', null, InputOption::VALUE_REQUIRED, 'Specify only the views you want generated: index,create,edit,show'],
             ['relations', null, InputOption::VALUE_NONE, 'Specify if you want to pass relationships for fields'],
             ['media', null, InputOption::VALUE_NONE, 'Specify if model has media upload files'],
+            ['migrate', null, InputOption::VALUE_NONE, 'Specify if auto migrate database or not'],
+
         ];
     }
 

@@ -77,6 +77,8 @@ class RollbackGeneratorCommand extends Command
             $this->error('invalid rollback type');
         }
 
+        $migrate = $this->option('migrate');
+
         $this->commandData = new CommandData($this, $this->argument('type'));
         $this->commandData->config->mName = $this->commandData->modelName = $this->argument('model');
 
@@ -139,9 +141,10 @@ class RollbackGeneratorCommand extends Command
             $menuGenerator = new MenuGenerator($this->commandData);
             $menuGenerator->rollback();
         }
-
-        $this->info('Generating autoload files');
-        $this->composer->dumpOptimized();
+        if (!$migrate) {
+            $this->info('Generating autoload files');
+            $this->composer->dumpOptimized();
+        }
     }
 
     /**
@@ -154,6 +157,7 @@ class RollbackGeneratorCommand extends Command
         return [
             ['tableName', null, InputOption::VALUE_REQUIRED, 'Table Name'],
             ['prefix', null, InputOption::VALUE_REQUIRED, 'Prefix for all files'],
+            ['migrate', null, InputOption::VALUE_NONE, 'specify if auto migrate'],
         ];
     }
 

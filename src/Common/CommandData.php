@@ -58,6 +58,7 @@ class CommandData
             '$FIELD_NAME$'       => 'name',
             '$FIELD_TITLE$' => 'name',
         ];
+        $this->relations = [];
 
         $this->config = new GeneratorConfig();
     }
@@ -110,6 +111,7 @@ class CommandData
     public function getFields()
     {
         $this->fields = [];
+        $this->relations = [];
 
         if ($this->getOption('fieldsFile') or $this->getOption('jsonFromGUI')) {
             $this->getInputFromFileOrJson();

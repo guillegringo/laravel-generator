@@ -16,8 +16,10 @@ use InfyOm\Generator\Commands\Publish\LayoutPublishCommand;
 use InfyOm\Generator\Commands\Publish\PublishTemplateCommand;
 use InfyOm\Generator\Commands\Publish\VueJsLayoutPublishCommand;
 use InfyOm\Generator\Commands\RollbackGeneratorCommand;
+use InfyOm\Generator\Commands\Scaffold\AppGeneratorCommand;
 use InfyOm\Generator\Commands\Scaffold\ControllerGeneratorCommand;
 use InfyOm\Generator\Commands\Scaffold\RequestsGeneratorCommand;
+use InfyOm\Generator\Commands\Scaffold\RollbackAppGeneratorCommand;
 use InfyOm\Generator\Commands\Scaffold\ScaffoldGeneratorCommand;
 use InfyOm\Generator\Commands\Scaffold\ViewsGeneratorCommand;
 use InfyOm\Generator\Commands\VueJs\VueJsGeneratorCommand;
@@ -55,6 +57,13 @@ class InfyOmGeneratorServiceProvider extends ServiceProvider
 
         $this->app->singleton('infyom.scaffold', function ($app) {
             return new ScaffoldGeneratorCommand();
+        });
+
+        $this->app->singleton('infyom.app', function ($app) {
+            return new AppGeneratorCommand();
+        });
+        $this->app->singleton('infyom.app.rollback', function ($app) {
+            return new RollbackAppGeneratorCommand();
         });
 
         $this->app->singleton('infyom.publish.layout', function ($app) {
@@ -120,6 +129,8 @@ class InfyOmGeneratorServiceProvider extends ServiceProvider
             'infyom.publish',
             'infyom.api',
             'infyom.scaffold',
+            'infyom.app',
+            'infyom.app.rollback',
             'infyom.api_scaffold',
             'infyom.publish.layout',
             'infyom.publish.templates',
