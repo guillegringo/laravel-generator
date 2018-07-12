@@ -144,11 +144,13 @@ class ControllerGenerator extends BaseGenerator
         $headerFieldTemplate = get_template('scaffold.views.datatable_column', $this->templateType);
         $mediaFieldTemplate = get_template('scaffold.views.media_column', $this->templateType);
         $dateFieldTemplate = get_template('scaffold.views.date_column', $this->templateType);
+        $booleanFieldTemplate = get_template('scaffold.views.boolean_column', $this->templateType);
         $selectsFieldTemplate = get_template('scaffold.views.selects_column', $this->templateType);
 
         $headerFields = [];
         $mediaFields = [];
         $dateFields = [];
+        $booleanFields = [];
         $selectsFields = [];
         $selectsFieldsStr = '';
         $rawColumn = '';
@@ -187,10 +189,19 @@ class ControllerGenerator extends BaseGenerator
                     $field
                 );
                 $rawColumn = $rawColumn . ",'" . $field->name . "'";
+            }else if( $field->htmlType === 'boolean'){
+                $booleanFields[] = $fieldTemplate = fill_template_with_field_data(
+                    $this->commandData->dynamicVars,
+                    $this->commandData->fieldNamesMapping,
+                    $dateFieldTemplate,
+                    $field
+                );
+                $rawColumn = $rawColumn . ",'" . $field->name . "'";
             }
             if ($field->htmlType === 'select') {
                 /*Multiple select generation*/
                 if($field->dbInput === 'hidden,mtm'){
+                    $this->commandData->fieldNamesMapping['$FIELD_TITLE$'] = 'name';
                     $selectsFieldsStr .= fill_template([
                         '$RELATION_MODEL_PLURAL$' => $field->name,
                         '$RELATION_MODEL_TITLE$' => preg_split('/\./', $field->title)[1],
@@ -242,6 +253,9 @@ class ControllerGenerator extends BaseGenerator
 
         $fields = implode('' . infy_nl_tab(1, 4), $dateFields);
         $templateData = str_replace('$DATE_COLUMNS$', $fields, $templateData);
+
+        $fields = implode('' . infy_nl_tab(1, 4), $booleanFields);
+        $templateData = str_replace('$BOOLEAN_COLUMNS$', $fields, $templateData);
 
         $fields = implode('' . infy_nl_tab(1, 4), $selectsFields);
         $templateData = str_replace('$SELECTS_COLUMNS$', $fields, $templateData);
