@@ -60,6 +60,9 @@ class GeneratorFieldsInputUtil
 
     public static function prepareKeyValueArrayStr($arr)
     {
+        if(empty($arr) || count($arr)===0){
+            return '[]';
+        }
         $arrStr = '[';
         foreach ($arr as $key => $item) {
             $arrStr .= "'$item' => '$key', ";
@@ -74,6 +77,9 @@ class GeneratorFieldsInputUtil
 
     public static function prepareValuesArrayStr($arr)
     {
+        if(empty($arr) || count($arr)===0){
+            return '[]';
+        }
         $arrStr = '[';
         foreach ($arr as $item) {
             $arrStr .= "'$item', ";
@@ -89,7 +95,9 @@ class GeneratorFieldsInputUtil
     public static function prepareKeyValueArrFromLabelValueStr($values)
     {
         $arr = [];
-
+        if(empty($values) || count($values)===0){
+            return [];
+        }
         foreach ($values as $value) {
             $labelValue = explode(':', $value);
 

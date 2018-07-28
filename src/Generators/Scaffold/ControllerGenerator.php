@@ -66,7 +66,7 @@ class ControllerGenerator extends BaseGenerator
                         $mediaFieldTemplate,
                         $field
                     );
-                } elseif ($field->htmlType === 'select') {
+                } elseif ($field->htmlType === 'select' && $field->title) {
                     if(!in_array($field->title, $needRepositoy)) {
                         $needRepositoy[] = $field->title;
                     }
