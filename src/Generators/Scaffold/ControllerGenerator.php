@@ -157,19 +157,7 @@ class ControllerGenerator extends BaseGenerator
         $relations = '';
 
         foreach ($this->commandData->fields as $field) {
-
-            $langContents = file_get_contents($this->commandData->config->pathLang);
-            $langTemplate = get_template('scaffold.lang.fields', $this->templateType);
-
-            $langTemplate = fill_template_with_field_data(
-                $this->commandData->dynamicVars,
-                $this->commandData->fieldNamesMapping,
-                $langTemplate,
-                $field
-            );
-            $langContents = str_replace("#NewLangHere", $langTemplate, $langContents);
-            file_put_contents($this->commandData->config->pathLang, $langContents);
-
+            
             if (!$field->inIndex) {
                 continue;
             }

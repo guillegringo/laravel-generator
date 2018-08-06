@@ -2,6 +2,7 @@
 
 namespace InfyOm\Generator\Generators\Scaffold;
 
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use InfyOm\Generator\Common\CommandData;
@@ -9,6 +10,7 @@ use InfyOm\Generator\Generators\BaseGenerator;
 use InfyOm\Generator\Utils\FileUtil;
 use InfyOm\Generator\Utils\GeneratorFieldsInputUtil;
 use InfyOm\Generator\Utils\HTMLFieldGenerator;
+use Themsaid\Langman\Manager;
 
 class ViewGenerator extends BaseGenerator
 {
@@ -25,10 +27,13 @@ class ViewGenerator extends BaseGenerator
     /** @var array */
     private $htmlFields;
 
+    private $langManager;
+
     public function __construct(CommandData $commandData)
     {
         $this->commandData = $commandData;
         $this->path = $commandData->config->pathViews;
+        $this->langManager = new Manager(new Filesystem(), config('langman.path'), []);
         $this->templateType = config('infyom.laravel_generator.templates', 'adminlte-templates');
     }
 
@@ -188,14 +193,54 @@ class ViewGenerator extends BaseGenerator
         $this->commandData->commandInfo('index.blade.php created');
     }
 
+    /**
+    '$MODEL_NAME_SNAKE$' => '$MODEL_NAME_HUMAN$',
+    '$MODEL_NAME_SNAKE$_plural' => '$MODEL_NAME_PLURAL_HUMAN$',
+    '$MODEL_NAME_SNAKE$_desc' => '$MODEL_NAME_PLURAL_HUMAN$ Management',
+    '$MODEL_NAME_SNAKE$_edit' => 'Edit $MODEL_NAME_HUMAN$',
+    '$MODEL_NAME_SNAKE$_table' => '$MODEL_NAME_PLURAL_HUMAN$ List',
+    '$MODEL_NAME_SNAKE$_create' => 'Create $MODEL_NAME_HUMAN$',
+     */
+
+    /**
+    '$MODEL_NAME_SNAKE$_$FIELD_NAME$' => '$FIELD_NAME_TITLE$',
+    '$MODEL_NAME_SNAKE$_$FIELD_NAME$_help' => 'Insert $FIELD_NAME_TITLE$',
+    '$MODEL_NAME_SNAKE$_$FIELD_NAME$_placeholder' => 'Insert $FIELD_NAME_TITLE$',
+     */
     private function generateLanguage()
     {
-        $langContents = file_get_contents($this->commandData->config->pathLang);
-        $langTemplate = get_template('scaffold.lang.lang', 'laravel-generator');
-        $langTemplate = fill_template($this->commandData->dynamicVars, $langTemplate);
-        $langContents = str_replace("#NewLangHere", $langTemplate, $langContents);
-        file_put_contents($this->commandData->config->pathLang, $langContents);
-        $this->commandData->commandComment("\n" . $this->commandData->config->mCamelPlural . ' language added.');
+        $this->langManager->fillKeys('lang', $this->getLangArray());
+    }
+
+    private function getTransArray($string = ''){
+        $result = [];
+        foreach ($this->langManager->languages() as $codelang){
+            $result[$codelang] = $string;
+        }
+        return $result;
+    }
+    
+    private function getLangArray(){
+        $mSnake = $this->commandData->config->mSnake;
+        $lang = [
+            $mSnake => $this->getTransArray($this->commandData->config->mHuman),
+            $mSnake."_plural" => $this->getTransArray($this->commandData->config->mHumanPlural),
+            $mSnake."_desc" => $this->getTransArray($this->commandData->config->mHumanPlural.' Management'),
+            $mSnake."_edit" => $this->getTransArray('Edit '.$this->commandData->config->mHuman),
+            $mSnake."_table" => $this->getTransArray($this->commandData->config->mHumanPlural.' List'),
+            $mSnake."_create" => $this->getTransArray('Create '.$this->commandData->config->mHuman),
+        ];
+        foreach ($this->commandData->fields as $field) {
+            $title = preg_replace('/-|_/',' ',title_case($field->name));
+            if($field->inIndex || $field->inForm){
+                $lang[$mSnake.'_'.$field->name] = $this->getTransArray($title);
+            }
+            if($field->inForm){
+                $lang[$mSnake.'_'.$field->name.'_help'] = $this->getTransArray('Insert '.$title);
+                $lang[$mSnake.'_'.$field->name.'_placeholder'] = $this->getTransArray('Insert '.$title);
+            }
+        }
+        return $lang;
     }
 
     private function generateFields()
@@ -309,6 +354,7 @@ class ViewGenerator extends BaseGenerator
                 $this->commandData->commandComment($file . ' file deleted');
             }
         }
+        $this->langManager->removeKey('lang', array_keys($this->getLangArray()));
     }
 
     public function generateCustomField($fields)
