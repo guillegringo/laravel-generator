@@ -181,7 +181,7 @@ class ControllerGenerator extends BaseGenerator
                 $booleanFields[] = $fieldTemplate = fill_template_with_field_data(
                     $this->commandData->dynamicVars,
                     $this->commandData->fieldNamesMapping,
-                    $dateFieldTemplate,
+                    $booleanFieldTemplate,
                     $field
                 );
                 $rawColumn = $rawColumn . ",'" . $field->name . "'";
