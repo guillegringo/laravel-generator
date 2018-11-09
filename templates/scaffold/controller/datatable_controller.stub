@@ -7,6 +7,7 @@ use $NAMESPACE_REQUEST$;
 use $NAMESPACE_REQUEST$\Create$MODEL_NAME$Request;
 use $NAMESPACE_REQUEST$\Update$MODEL_NAME$Request;
 use $NAMESPACE_REPOSITORY$\$MODEL_NAME$Repository;
+use App\Repositories\CustomFieldRepository;
 $ADD_USED$
 use Flash;
 use Illuminate\Http\Request;
@@ -19,12 +20,18 @@ class $MODEL_NAME$Controller extends Controller
     /** @var  $MODEL_NAME$Repository */
     private $$MODEL_NAME_CAMEL$Repository;
 
+    /**
+     * @var CustomFieldRepository
+     */
+    private $customFieldRepository;
+
     $ADD_ATTR$
 
-    public function __construct($MODEL_NAME$Repository $$MODEL_NAME_CAMEL$Repo $ADD_ATTR_PARAM$)
+    public function __construct($MODEL_NAME$Repository $$MODEL_NAME_CAMEL$Repo, CustomFieldRepository $customFieldRepo $ADD_ATTR_PARAM$)
     {
         parent::__construct();
         $this->$MODEL_NAME_CAMEL$Repository = $$MODEL_NAME_CAMEL$Repo;
+        $this->customFieldRepository = $customFieldRepo;
         $ADD_ATTR_INIT$
     }
 
@@ -48,7 +55,12 @@ class $MODEL_NAME$Controller extends Controller
     {
         $SELECT_RELATIONS$
         $SELECTED_RELATIONS_ADD$
-        return view('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.create')$SELECT_RELATIONS_PARAM$;
+        $hasCustomField = in_array($this->$MODEL_NAME_CAMEL$Repository->model(),setting('custom_field_models',[]));
+            if($hasCustomField){
+                $customFields = $this->customFieldRepository->findByField('custom_field_model', $this->$MODEL_NAME_CAMEL$Repository->model());
+                $html = generateCustomField($customFields);
+            }
+        return view('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.create')->with("customFields", isset($html) ? $html : false)$SELECT_RELATIONS_PARAM$;
     }
 
     /**
@@ -61,15 +73,16 @@ class $MODEL_NAME$Controller extends Controller
     public function store(Create$MODEL_NAME$Request $request)
     {
         $input = $request->all();
+        $customFields = $this->customFieldRepository->findByField('custom_field_model', $this->$MODEL_NAME_CAMEL$Repository->model());
         try {
             $$MODEL_NAME_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->create($input);
+            $$MODEL_NAME_CAMEL$->customFieldsValues()->createMany(getCustomFieldsValues($customFields,$request));
+            $MEDIA_COLUMNS$
         } catch (ValidatorException $e) {
             Flash::error($e->getMessage());
         }
 
-        $MEDIA_COLUMNS$
-
-        Flash::success('saved successfully.');
+        Flash::success(__('lang.saved_successfully',['operator' => __('lang.$MODEL_NAME_SNAKE$')]));
 
         return redirect(route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_CAMEL$.index'));
     }
@@ -108,12 +121,18 @@ class $MODEL_NAME$Controller extends Controller
         $SELECTED_RELATIONS_EDIT$
 
         if (empty($$MODEL_NAME_CAMEL$)) {
-            Flash::error('$MODEL_NAME_HUMAN$ not found');
+            Flash::error(__('lang.not_found',['operator' => __('lang.$MODEL_NAME_SNAKE$')]));
 
             return redirect(route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_CAMEL$.index'));
         }
+        $customFieldsValues = $$MODEL_NAME_CAMEL$->customFieldsValues()->with('customField')->get();
+        $customFields =  $this->customFieldRepository->findByField('custom_field_model', $this->$MODEL_NAME_CAMEL$Repository->model());
+        $hasCustomField = in_array($this->$MODEL_NAME_CAMEL$Repository->model(),setting('custom_field_models',[]));
+        if($hasCustomField) {
+            $html = generateCustomField($customFields, $customFieldsValues);
+        }
 
-        return view('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.edit')->with('$MODEL_NAME_CAMEL$', $$MODEL_NAME_CAMEL$)$SELECT_RELATIONS_PARAM$;
+        return view('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.edit')->with('$MODEL_NAME_CAMEL$', $$MODEL_NAME_CAMEL$)->with("customFields", isset($html) ? $html : false)$SELECT_RELATIONS_PARAM$;
     }
 
     /**
@@ -130,21 +149,23 @@ class $MODEL_NAME$Controller extends Controller
 
         if (empty($$MODEL_NAME_CAMEL$)) {
             Flash::error('$MODEL_NAME_HUMAN$ not found');
-
             return redirect(route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_CAMEL$.index'));
         }
-
         $input = $request->all();
+        $customFields = $this->customFieldRepository->findByField('custom_field_model', $this->$MODEL_NAME_CAMEL$Repository->model());
         try {
-            $SELECTS_RELATIONS_UPDATE$
             $$MODEL_NAME_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->update($input, $id);
+            $SELECTS_RELATIONS_UPDATE$
+            $MEDIA_COLUMNS$
+            foreach (getCustomFieldsValues($customFields, $request) as $value){
+                $$MODEL_NAME_CAMEL$->customFieldsValues()
+                    ->updateOrCreate(['custom_field_id'=>$value['custom_field_id']],$value);
+            }
         } catch (ValidatorException $e) {
             Flash::error($e->getMessage());
         }
 
-        $MEDIA_COLUMNS$
-
-        Flash::success('$MODEL_NAME_HUMAN$ updated successfully.');
+        Flash::success(__('lang.updated_successfully',['operator' => __('lang.$MODEL_NAME_SNAKE$')]));
 
         return redirect(route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_CAMEL$.index'));
     }
@@ -168,7 +189,7 @@ class $MODEL_NAME$Controller extends Controller
 
         $this->$MODEL_NAME_CAMEL$Repository->delete($id);
 
-        Flash::success('$MODEL_NAME_HUMAN$ deleted successfully.');
+        Flash::success(__('lang.deleted_successfully',['operator' => __('lang.$MODEL_NAME_SNAKE$')]));
 
         return redirect(route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_CAMEL$.index'));
     }

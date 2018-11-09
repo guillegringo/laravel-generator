@@ -3,5 +3,5 @@
     */
     public function get$RELATION_MODEL_PLURAL_CAPITAL$Attribute()
     {
-        return $this->$RELATION_MODEL_PLURAL$()->get(['$RELATION_MODEL_PLURAL$.id', '$RELATION_MODEL_TITLE$']);
+        return $this->$RELATION_MODEL_PLURAL$()->get(['$RELATION_MODEL_PLURAL$.id', '$RELATION_MODEL_PLURAL$.$RELATION_MODEL_TITLE$']);
     }

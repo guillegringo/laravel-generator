@@ -30,30 +30,12 @@
         <li class="nav-item">
           <a class="nav-link active" href="{!! url()->current() !!}"><i class="fa fa-list mr-2"></i>{{trans('lang.$MODEL_NAME_SNAKE$_table')}}</a>
         </li>
+        @can('$MODEL_NAME_PLURAL_CAMEL$.create')
         <li class="nav-item">
           <a class="nav-link" href="{!! route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_CAMEL$.create') !!}"><i class="fa fa-plus mr-2"></i>{{trans('lang.$MODEL_NAME_SNAKE$_create')}}</a>
         </li>
-        <div class="ml-auto d-inline-flex">
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle pt-1" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-save"></i> {{trans('lang.export')}}</a>
-            <div class="dropdown-menu">
-              <a class="dropdown-item" id="exportCsvDatatable" href="#"> <i class="fa fa-file-excel-o mr-2"></i>CSV</a>
-              <a class="dropdown-item" id="exportExcelDatatable" href="#"> <i class="fa fa-file-excel-o mr-2"></i>Excel</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" id="exportPdfDatatable" href="#"> <i class="fa fa-file-pdf-o mr-2"></i>PDF</a>
-            </div>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link pt-1" id="refreshDatatable" href="#"><i class="fa fa-refresh"></i> {{trans('lang.refresh')}}</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link pt-1" id="printDatatable" href="#"><i class="fa fa-print"></i> {{trans('lang.print')}}</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link pt-1" id="resetDatatable" href="#"><i class="fa fa-undo"></i> {{trans('lang.reset')}}</a>
-          </li>
-
-        </div>
+        @endcan
+        @include('layouts.right_toolbar', compact('dataTable'))
       </ul>
     </div>
     <div class="card-body">

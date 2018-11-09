@@ -37,12 +37,16 @@
   <div class="card">
     <div class="card-header">
       <ul class="nav nav-tabs align-items-end card-header-tabs w-100">
+        @can('$MODEL_NAME_PLURAL_CAMEL$.index')
         <li class="nav-item">
           <a class="nav-link" href="{!! route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_CAMEL$.index') !!}"><i class="fa fa-list mr-2"></i>{{trans('lang.$MODEL_NAME_SNAKE$_table')}}</a>
         </li>
+        @endcan
+        @can('$MODEL_NAME_PLURAL_CAMEL$.create')
         <li class="nav-item">
           <a class="nav-link" href="{!! route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_CAMEL$.create') !!}"><i class="fa fa-plus mr-2"></i>{{trans('lang.$MODEL_NAME_SNAKE$_create')}}</a>
         </li>
+        @endcan
         <li class="nav-item">
           <a class="nav-link active" href="{!! url()->current() !!}"><i class="fa fa-pencil mr-2"></i>{{trans('lang.$MODEL_NAME_SNAKE$_edit')}}</a>
         </li>
