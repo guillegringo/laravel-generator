@@ -1,4 +1,4 @@
-InfyOm Laravel Generator
+Laravel Generator
 ==============================
 
 [![Total Downloads](https://poser.pugx.org/infyomlabs/laravel-generator/downloads)](https://packagist.org/packages/infyomlabs/laravel-generator)
